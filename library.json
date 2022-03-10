@@ -1,8 +1,22 @@
 {
     "name": "htcw_tft_io",
-    "version": "1.0",
+    "version": "1.0.0",
+    "description": "Provides high performance decoupled communication for TFT and E-Paper devices over I2C, SPI or 8-bit parallel interfaces. Geared for the ESP32 but will support other platforms to varying degrees.",
+    "keywords": ["tft","io","spi","parallel","i2c"],
+    "authors": {
+        "name":"honey the codewitch",
+        "homepage": "https://www.codeproject.com/Members/code-witch"
+    },
+    "license": "MIT License",
+    "frameworks": ["arduino"],
+    "platforms": "*",
     "build": {
         "unflags": "-std=gnu++11",
         "flags": "-std=gnu++14"
+    },
+    "repository":
+    {
+        "type": "git",
+        "url": "https://github.com/codewitch-honey-crisis/htcw_tft_io.git"
     }
 }
