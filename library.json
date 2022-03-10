@@ -7,7 +7,7 @@
         "name":"honey the codewitch",
         "homepage": "https://www.codeproject.com/Members/code-witch"
     },
-    "license": "MIT License",
+    "license": "MIT",
     "frameworks": ["arduino"],
     "platforms": "*",
     "build": {
