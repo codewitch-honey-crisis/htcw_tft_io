@@ -1,0 +1,8 @@
+{
+    "name": "htcw_tft_io",
+    "version": "1.0",
+    "build": {
+        "unflags": "-std=gnu++11",
+        "flags": "-std=gnu++14"
+    }
+}
