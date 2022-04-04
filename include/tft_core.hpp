@@ -1,10 +1,12 @@
 #pragma once
 #include <Arduino.h>
 #if defined(ESP32)
-   #define OPTIMIZE_ESP32
-   #define OPTIMIZE_DMA
-   #define ASSIGNABLE_SPI_PINS
-   #define ASSIGNABLE_I2C_PINS
+    #if !defined(CONFIG_IDF_TARGET_ESP32C3) && !defined(CONFIG_IDF_TARGET_ESP32S3)
+        #define OPTIMIZE_ESP32
+        #define OPTIMIZE_DMA
+    #endif
+    #define ASSIGNABLE_SPI_PINS
+    #define ASSIGNABLE_I2C_PINS
 #endif
 #if defined(ARDUINO_ARCH_STM32)
     //#define ASSIGNABLE_SPI_PINS

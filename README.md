@@ -6,7 +6,7 @@ Here's a template for declaring all 3 types.
 
 C++
 ```
-#include "common/tft_io.hpp"
+#include <tft_io.hpp>
 using namespace arduino;
 #if defined(PARALLEL8)
 #define PIN_NUM_BCKL -1
