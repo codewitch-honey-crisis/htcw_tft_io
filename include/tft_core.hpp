@@ -1,7 +1,7 @@
 #pragma once
 #include <Arduino.h>
 #if defined(ESP32)
-    #if !defined(CONFIG_IDF_TARGET_ESP32C3) && !defined(CONFIG_IDF_TARGET_ESP32S3)
+    #if !defined(CONFIG_IDF_TARGET_ESP32C3) && !defined(CONFIG_IDF_TARGET_ESP32S2) && !defined(CONFIG_IDF_TARGET_ESP32S3)
         #define OPTIMIZE_ESP32
         #define OPTIMIZE_DMA
     #endif
