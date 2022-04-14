@@ -235,6 +235,12 @@ namespace arduino {
             write_raw8(value);
             return read_raw8();
         }
+        static uint16_t read_write_raw16(uint16_t value) FORCE_INLINE {
+            write_raw16(value);
+            uint16_t result = read_raw8()<<8;
+            result |= read_raw8();
+            return result;
+        }
         static uint8_t read_raw8() {
             rd_low();
             uint8_t b = 0xAA;

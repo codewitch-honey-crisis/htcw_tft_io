@@ -204,6 +204,14 @@ namespace arduino {
             write_raw8(value);
             return read_raw8();
         }
+        static uint16_t read_write_raw16(uint16_t value) FORCE_INLINE {
+            write_raw16(value);
+            return read_raw16();
+        }
+        static uint8_t read_write_raw8(uint8_t value) FORCE_INLINE {
+            write_raw8(value);
+            return read_raw8();
+        }
         static uint8_t read_raw8() {
             i2c().beginTransmission(address);
             i2c().write(payload);
@@ -211,6 +219,14 @@ namespace arduino {
             i2c().readBytes(&b,1);
             i2c().endTransmission(true);
             return b;
+        }
+        static uint16_t read_raw16() {
+            i2c().beginTransmission(address);
+            i2c().write(payload);
+            uint16_t i=0;
+            i2c().readBytes(&i,2);
+            i2c().endTransmission(true);
+            return i;
         }
         static void read_raw(uint8_t* buffer,size_t size) {
             while(size--) {
