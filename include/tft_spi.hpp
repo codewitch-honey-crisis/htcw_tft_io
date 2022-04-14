@@ -356,6 +356,12 @@ constexpr static const uint8_t dma_channel =
             write_raw16(value>>16);
             write_raw16(value);
         }
+        static uint8_t read_write_raw8(uint8_t value) FORCE_INLINE {
+#ifdef ASSIGNABLE_SPI_PINS
+            if(sda_read) return 0;
+#endif
+            return spi.transfer(value);
+        }
         static uint8_t read_raw8() {
 #if defined(OPTIMIZE_ESP32)
             return spi().transfer(0);

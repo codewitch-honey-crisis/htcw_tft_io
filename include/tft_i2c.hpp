@@ -200,6 +200,10 @@ namespace arduino {
             }
             i2c().endTransmission(true);
         }
+        static uint8_t read_write_raw8(uint8_t value) FORCE_INLINE {
+            write_raw8(value);
+            return read_raw8();
+        }
         static uint8_t read_raw8() {
             i2c().beginTransmission(address);
             i2c().write(payload);
