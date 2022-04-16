@@ -220,7 +220,7 @@ namespace arduino {
             i2c().beginTransmission(address);
             i2c().write(payload);
             uint16_t i=0;
-            i2c().readBytes(&i,2);
+            i2c().readBytes((char*)&i,2);
             i2c().endTransmission(true);
             return i;
         }
