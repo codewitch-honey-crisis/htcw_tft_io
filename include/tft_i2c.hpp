@@ -13,22 +13,13 @@
 #define HTCW_I2C_WIRE_MAX 32 ///< Use common Arduino core default
 #endif
 namespace arduino {
-    template<uint8_t I2CHost,
-#ifdef ASSIGNABLE_I2C_PINS
-        int8_t PinSda=-1,
-        int8_t PinScl=-1,
+    template<uint8_t I2CHost> 
+    class i2c_container final {
+#ifdef ESP32
+        static TwoWire ii2c;
 #endif
-        size_t I2CBufferSize = HTCW_I2C_WIRE_MAX>
-    struct tft_i2c_ex {
-        constexpr static const uint8_t i2c_host = I2CHost;
-        constexpr static const tft_io_type type = tft_io_type::i2c;
-        constexpr static const bool readable = true;
-        constexpr static const size_t dma_size = 0;
-        constexpr static const uint8_t dma_channel = 0;
-        constexpr static const uint32_t base_speed = 100*1000;
-        constexpr static const size_t i2c_buffer_size = I2CBufferSize;
-    private:
-        inline static TwoWire& i2c() FORCE_INLINE {
+    public:
+     inline static TwoWire& instance() FORCE_INLINE {
 #if defined(ESP32)
             return ii2c;
 #else
@@ -61,10 +52,29 @@ namespace arduino {
 #endif
             return Wire;
         }
-    public:
-#ifdef ESP32
-        static TwoWire ii2c;
+    };
+#if defined(ESP32)
+    template<uint8_t I2CHost>
+        TwoWire i2c_container<I2CHost>
+    ::ii2c(I2CHost);
 #endif
+    template<uint8_t I2CHost,
+#ifdef ASSIGNABLE_I2C_PINS
+        int8_t PinSda=-1,
+        int8_t PinScl=-1,
+#endif
+        size_t I2CBufferSize = HTCW_I2C_WIRE_MAX>
+    struct tft_i2c_ex {
+        constexpr static const uint8_t i2c_host = I2CHost;
+        constexpr static const tft_io_type type = tft_io_type::i2c;
+        constexpr static const bool readable = true;
+        constexpr static const size_t dma_size = 0;
+        constexpr static const uint8_t dma_channel = 0;
+        constexpr static const uint32_t base_speed = 100*1000;
+        constexpr static const size_t i2c_buffer_size = I2CBufferSize;
+        inline static TwoWire& i2c() FORCE_INLINE {
+            return i2c_container<i2c_host>::instance();
+        }
         static uint32_t speed;
         static uint8_t address;
         static uint8_t payload;
@@ -324,20 +334,6 @@ namespace arduino {
 #endif // ASSIGNABLE_SPI_PINS
         ,I2CBufferSize>
     ::payload = 0;
-#if defined(ESP32)
-        template<uint8_t I2CHost,
-#ifdef ASSIGNABLE_I2C_PINS
-        int8_t PinSda,
-        int8_t PinScl,
-#endif // ASSIGNABLE_SPI_PINS
-        size_t I2CBufferSize>
-        TwoWire tft_i2c_ex<I2CHost
-#ifdef ASSIGNABLE_I2C_PINS
-        ,PinSda,PinScl
-#endif // ASSIGNABLE_SPI_PINS
-        ,I2CBufferSize>
-    ::ii2c(i2c_host);
-#endif
     template<uint8_t I2CHost,
 #ifdef ASSIGNABLE_I2C_PINS
         int8_t PinSda,

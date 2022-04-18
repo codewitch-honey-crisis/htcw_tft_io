@@ -8,6 +8,53 @@
 #endif
 
 namespace arduino {
+    template<uint8_t SpiHost>
+    class spi_container final {
+        #if defined(ESP32) || defined(ARDUINO_ARCH_STM32)
+                static SPIClass ispi;
+        #endif
+    public:
+        inline static SPIClass& instance() FORCE_INLINE {
+            #if defined(ESP32) || defined(ARDUINO_ARCH_STM32)
+                        return ispi;
+            #else
+
+            #if SPI_INTERFACES_COUNT > 1
+                        if(SpiHost==1) {
+                            return SPI1;
+                        }
+            #endif
+            #if SPI_INTERFACES_COUNT > 2
+                        if(SpiHost==2) {
+                            return SPI2;
+                        }
+            #endif
+            #if SPI_INTERFACES_COUNT > 3
+                        if(SpiHost==3) {
+                            return SPI3;
+                        }
+            #endif
+            #if SPI_INTERFACES_COUNT > 4
+                        if(SpiHost==4) {
+                            return SPI4;
+                        }
+            #endif
+            #if SPI_INTERFACES_COUNT > 5
+                        if(SpiHost==5) {
+                            return SPI5;
+                        }
+            #endif
+
+            #endif
+            return SPI;
+        }
+    };
+    #if defined(ESP32) || defined(ARDUINO_ARCH_STM32)
+        template<uint8_t SpiHost> 
+        SPIClass spi_container<SpiHost>::ispi(SpiHost);
+
+    #endif
+
     template<uint8_t SpiHost,
         int8_t PinCS=-1, 
 #ifdef ASSIGNABLE_SPI_PINS
@@ -62,6 +109,7 @@ constexpr static const uint8_t dma_channel =
         constexpr static const int8_t pin_sclk = PinSClk;
 #endif // ASSIGNABLE_SPI_PINS
     private:
+        using spi_holder = spi_container<SpiHost>;
 #if defined(OPTIMIZE_ESP32) && defined(OPTIMIZE_DMA)
         constexpr static const uint8_t spi_host_real = (HSPI==SpiHost)?1:(VSPI==SpiHost)?2:0;
 #endif
@@ -85,42 +133,11 @@ constexpr static const uint8_t dma_channel =
 #if defined(ESP32) || defined(ARDUINO_ARCH_STM32)
         static SPIClass ispi;
 #endif
-
+public:
         inline static SPIClass& spi() FORCE_INLINE {
-#if defined(ESP32) || defined(ARDUINO_ARCH_STM32)
-            return ispi;
-#else
-
- #if SPI_INTERFACES_COUNT > 1
-            if(SpiHost==1) {
-                return SPI1;
-            }
-#endif
-#if SPI_INTERFACES_COUNT > 2
-            if(SpiHost==2) {
-                return SPI2;
-            }
-#endif
-#if SPI_INTERFACES_COUNT > 3
-            if(SpiHost==3) {
-                return SPI3;
-            }
-#endif
-#if SPI_INTERFACES_COUNT > 4
-            if(SpiHost==4) {
-                return SPI4;
-            }
-#endif
-#if SPI_INTERFACES_COUNT > 5
-            if(SpiHost==5) {
-                return SPI5;
-            }
-#endif
-
-#endif
-            return SPI;
+            return spi_holder::instance();
         }
-    public:
+    
         static bool initialize() {
             pinMode(pin_cs,OUTPUT);
             digitalWrite(pin_cs,HIGH);
