@@ -80,7 +80,7 @@ namespace arduino {
     {
         constexpr static const tft_io_type type = tft_io_type::spi;
 #ifdef ASSIGNABLE_SPI_PINS
-        constexpr static const bool readable = PinMiso > -1 || SdaRead;
+        constexpr static const bool readable = (PinMiso > -1 || (PinMosi==-1 && PinSClk==-1)) || SdaRead;
         constexpr static const bool sda_read = PinMiso < 0 && SdaRead;
 #else // !ASSIGNABLE_SPI_PINS
         constexpr static const bool readable = true;
