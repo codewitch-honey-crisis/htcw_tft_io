@@ -1,6 +1,6 @@
 {
     "name": "htcw_tft_io",
-    "version": "1.0.9",
+    "version": "1.1.0",
     "description": "Provides high performance decoupled communication for TFT and E-Paper devices over I2C, SPI or 8-bit parallel interfaces. Geared for the ESP32 but will support other platforms to varying degrees.",
     "keywords": ["tft","io","spi","parallel","i2c"],
     "authors": {

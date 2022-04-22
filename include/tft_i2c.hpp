@@ -13,7 +13,7 @@
 #define HTCW_I2C_WIRE_MAX 32 ///< Use common Arduino core default
 #endif
 namespace arduino {
-    template<uint8_t I2CHost> 
+    template<uint8_t I2CHost=0> 
     class i2c_container final {
 #ifdef ESP32
         static TwoWire ii2c;
@@ -58,7 +58,7 @@ namespace arduino {
         TwoWire i2c_container<I2CHost>
     ::ii2c(I2CHost);
 #endif
-    template<uint8_t I2CHost,
+    template<uint8_t I2CHost=0,
 #ifdef ASSIGNABLE_I2C_PINS
         int8_t PinSda=-1,
         int8_t PinScl=-1,
@@ -301,8 +301,8 @@ namespace arduino {
         }
     private:
     };
-    template<uint8_t I2CHost,
-        size_t I2CBufferSize
+    template<uint8_t I2CHost=0,
+        size_t I2CBufferSize=HTCW_I2C_WIRE_MAX
     >
 #ifdef ASSIGNABLE_I2C_PINS
     using tft_i2c = tft_i2c_ex<I2CHost,-1,-1,I2CBufferSize>;

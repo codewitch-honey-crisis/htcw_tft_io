@@ -8,7 +8,7 @@
 #endif
 
 namespace arduino {
-    template<uint8_t SpiHost>
+    template<uint8_t SpiHost=0>
     class spi_container final {
         #if defined(ESP32) || defined(ARDUINO_ARCH_STM32)
                 static SPIClass ispi;
@@ -653,7 +653,7 @@ public:
         }
 
     };
-    template<uint8_t SpiHost,
+    template<uint8_t SpiHost=0,
         int8_t PinCS=-1, 
         uint8_t SpiMode = SPI_MODE0
 #ifdef OPTIMIZE_DMA
