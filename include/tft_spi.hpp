@@ -67,7 +67,7 @@ namespace arduino {
         ,bool SdaRead = (PinMiso < 0)
 #endif // !ASSIGNABLE_SPI_PINS
 #ifdef OPTIMIZE_DMA
-    ,size_t DmaSize = 4096+8
+    ,size_t DmaSize = 0
     ,uint8_t DmaChannel = 
     #ifdef ESP32
         1
@@ -657,7 +657,7 @@ public:
         int8_t PinCS=-1, 
         uint8_t SpiMode = SPI_MODE0
 #ifdef OPTIMIZE_DMA
-    ,size_t DmaSize = 4096+8
+    ,size_t DmaSize = 0
     ,uint8_t DmaChannel = 
     #ifdef ESP32
         1
