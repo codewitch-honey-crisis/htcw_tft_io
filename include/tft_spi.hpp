@@ -386,9 +386,9 @@ public:
             return (uint16_t)spi().transfer16((uint16_t)value);
         }
         static uint8_t read_raw8() {
-#if defined(OPTIMIZE_ESP32)
+#if defined(ESP32)
             return spi().transfer(0);
-#else // !OPTIMIZE_ESP32
+#else // !ESP32
 #ifdef ASSIGNABLE_SPI_PINS
             if(sda_read) {
                 uint8_t  ret = 0;
@@ -408,9 +408,9 @@ public:
 #endif // !OPTIMIZE_ESP32
         }
         static void read_raw(uint8_t* buffer,size_t size) {
-#if defined(OPTIMIZE_ESP32)
+#if defined(ESP32)
             spi().transfer(buffer,size);
-#else // !OPTIMIZE_ESP32
+#else // !ESP32
 #ifdef ASSIGNABLE_SPI_PINS
             if(sda_read) {
                 while(size--) {
