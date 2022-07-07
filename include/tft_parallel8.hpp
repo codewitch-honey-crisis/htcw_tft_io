@@ -566,26 +566,6 @@ namespace arduino {
             }
         }
         inline static void pin_mode(int8_t pin, uint8_t mode) FORCE_INLINE {
-#ifdef OPTIMIZE_ESP32
-            if(pin<32) {
-                if(mode==INPUT) {
-                    GPIO.enable_w1tc = ((uint32_t)1 << pin);
-                } else {
-                    GPIO.enable_w1ts = ((uint32_t)1 << pin);
-                }
-            } else {
-                if(mode==INPUT) {
-                    GPIO.enable1_w1tc.val = ((uint32_t)1 << ((pin-32)&31));
-                } else {
-                    GPIO.enable1_w1ts.val = ((uint32_t)1 << ((pin-32)&31));
-                }
-            }
-            ESP_REG(DR_REG_IO_MUX_BASE + esp32_gpioMux[pin].reg) // Register lookup
-                = ((uint32_t)2 << FUN_DRV_S)                        // Set drive strength 2
-                | (FUN_IE)                                          // Input enable
-                | ((uint32_t)2 << MCU_SEL_S);                       // Function select 2
-            GPIO.pin[pin].val = 1;  
-#else // !OPTIMIZE_ESP32
         if(mode==INPUT) {
             digitalWrite(pin,LOW);
             pinMode(pin,INPUT);
@@ -593,7 +573,6 @@ namespace arduino {
             digitalWrite(pin,HIGH);
             pinMode(pin,OUTPUT);
         }
-#endif // !OPTIMIZE_ESP32
         }
         inline static void begin_write() FORCE_INLINE {
             cs_low();

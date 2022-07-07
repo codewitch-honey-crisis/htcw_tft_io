@@ -73,8 +73,3 @@ using bus_type = tft_spi_ex<TFT_HOST,
 Using them usually is in tandem with tft_driver.hpp.
 
 Examples forthcoming. My driver code uses this library.
-
-For some slightly out of date documentation/code that nevertheless demonstrates and explains the fundamentals, see this:
-https://www.codeproject.com/Articles/5324976/High-Performance-Decoupled-Buses-for-IoT-Displays
-
-You can try the code sample at the link, but the bus code is currently old so it's recommended that you do not use it for anything other than illustrative purposes.
