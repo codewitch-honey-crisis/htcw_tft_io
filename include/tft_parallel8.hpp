@@ -34,7 +34,7 @@ namespace arduino {
         constexpr static const int8_t pin_d5 = PinD5;
         constexpr static const int8_t pin_d6 = PinD6;
         constexpr static const int8_t pin_d7 = PinD7;
-#ifdef OPTIMIZE_ESP32
+#ifdef OPTIMIZE_ESP32_P8
     private:
         constexpr static const bool has_data_low_pins = (pin_d0>=0 && pin_d0<32) || 
                                                         (pin_d1>=0 && pin_d1<32) ||
@@ -134,7 +134,7 @@ namespace arduino {
         }
         static uint32_t xset_mask_low[256*has_data_low_pins];
         static uint32_t xset_mask_high[256*has_data_high_pins];
-#endif // OPTIMIZE_ESP32
+#endif // OPTIMIZE_ESP32_P8
     public:
         static bool initialize() {
             if(pin_cs > -1) {
@@ -181,7 +181,7 @@ namespace arduino {
                 pinMode(pin_d7,OUTPUT);
                 digitalWrite(pin_d7,HIGH);
             }
-#ifdef OPTIMIZE_ESP32
+#ifdef OPTIMIZE_ESP32_P8
             if(has_data_low_pins) {
                 for (int32_t c = 0; c<256; c++) {
                     xset_mask_low[c] = 0;
@@ -208,7 +208,7 @@ namespace arduino {
                     if ( pin_d7>31 && (c & 0x80) ) xset_mask_high[c] |= (1 << ((pin_d7-32)&31));
                 }
             }
-#endif // OPTIMIZE_ESP32
+#endif // OPTIMIZE_ESP32_P8
             // Set to output once again in case ESP8266 D6 (MISO) is used for CS
             if(pin_cs>-1) {
                 pinMode(pin_cs, OUTPUT);
@@ -244,7 +244,7 @@ namespace arduino {
         static uint8_t read_raw8() {
             rd_low();
             uint8_t b = 0xAA;
-#ifdef OPTIMIZE_ESP32
+#ifdef OPTIMIZE_ESP32_P8
             if(has_data_low_pins && has_data_high_pins) {
                 
                 // 3x for bus access stabilization
@@ -355,7 +355,7 @@ namespace arduino {
                     b |= (((pins_h>>((pin_d7-32)&31))&1)<<7);
                 }
             }
-#else // !OPTIMIZE_ESP32
+#else // !OPTIMIZE_ESP32_P8
             if(pin_d0>-1) {
                 b=digitalRead(pin_d0);
             } else {
@@ -382,7 +382,7 @@ namespace arduino {
             if(pin_d7>-1) {
                 b|=digitalRead(pin_d7)<<7;
             }
-#endif // !OPTIMIZE_ESP32
+#endif // !OPTIMIZE_ESP32_P8
             rd_high();
             return b;
         }
@@ -392,14 +392,14 @@ namespace arduino {
             }
         }
         inline static void write_raw8(uint8_t value) FORCE_INLINE {
-#ifdef OPTIMIZE_ESP32
+#ifdef OPTIMIZE_ESP32_P8
             if(has_data_low_pins) {
                 GPIO.out_w1tc = clr_mask_low(); GPIO.out_w1ts = xset_mask_low[value];
             }
             if(has_data_high_pins) {
                 GPIO.out1_w1tc.val = clr_mask_high(); GPIO.out1_w1ts.val = xset_mask_high[value];
             } 
-#else // !OPTIMIZE_ESP32
+#else // !OPTIMIZE_ESP32_P8
             digitalWrite(pin_d0,value&1);
             digitalWrite(pin_d1,(value>>1)&1);
             digitalWrite(pin_d2,(value>>2)&1);
@@ -408,7 +408,7 @@ namespace arduino {
             digitalWrite(pin_d5,(value>>5)&1);
             digitalWrite(pin_d6,(value>>6)&1);
             digitalWrite(pin_d7,(value>>7)&1);
-#endif // !OPTIMIZE_ESP32
+#endif // !OPTIMIZE_ESP32_P8
             wr_high();
         }
         inline static void begin_initialization() FORCE_INLINE {}
@@ -471,7 +471,7 @@ namespace arduino {
         
         inline static void write_raw16(uint16_t value) FORCE_INLINE {
             uint8_t b = uint8_t(value >> 8);
-#ifdef OPTIMIZE_ESP32
+#ifdef OPTIMIZE_ESP32_P8
             if(has_data_low_pins) {
                 GPIO.out_w1tc = clr_mask_low(); GPIO.out_w1ts = xset_mask_low[b];
             }
@@ -486,7 +486,7 @@ namespace arduino {
             if(has_data_high_pins) {
                 GPIO.out1_w1tc.val = clr_mask_high(); GPIO.out1_w1ts.val = xset_mask_high[b];
             } 
-#else // !OPTIMIZE_ESP32
+#else // !OPTIMIZE_ESP32_P8
             digitalWrite(pin_d0,b&1);
             digitalWrite(pin_d1,(b>>1)&1);
             digitalWrite(pin_d2,(b>>2)&1);
@@ -505,7 +505,7 @@ namespace arduino {
             digitalWrite(pin_d5,(b>>5)&1);
             digitalWrite(pin_d6,(b>>6)&1);
             digitalWrite(pin_d7,(b>>7)&1);
-#endif // !OPTIMIZE_ESP32
+#endif // !OPTIMIZE_ESP32_P8
             wr_high();
         }
         static void write_raw16_repeat(uint16_t value, size_t count) {
@@ -522,7 +522,7 @@ namespace arduino {
             }
         }
         inline static void write_raw32(uint32_t value) FORCE_INLINE {
-#ifdef OPTIMIZE_ESP32
+#ifdef OPTIMIZE_ESP32_P8
             uint8_t b = uint8_t(value >> 24);
             if(has_data_low_pins) {
                 GPIO.out_w1tc = clr_mask_low(); GPIO.out_w1ts = xset_mask_low[b];
@@ -555,10 +555,10 @@ namespace arduino {
                 GPIO.out1_w1tc.val = clr_mask_high(); GPIO.out1_w1ts.val = xset_mask_high[b];
             } 
             wr_high();
-#else // !OPTIMIZE_ESP32
+#else // !OPTIMIZE_ESP32_P8
             write_raw16(value>>16);
             write_raw16(value);
-#endif // !OPTIMIZE_ESP32
+#endif // !OPTIMIZE_ESP32_P8
         }
         static void write_raw32_repeat(uint32_t value, size_t count) {
             while(count--) {
@@ -597,76 +597,76 @@ namespace arduino {
             pin_mode(pin_d7,mode);
         }
         inline static void cs_low() FORCE_INLINE {
-#ifdef OPTIMIZE_ESP32
+#ifdef OPTIMIZE_ESP32_P8
             if(pin_cs>31) {
                 GPIO.out1_w1tc.val = (1 << ((pin_cs - 32)&31));
             } else if(pin_cs>-1) {
                 GPIO.out_w1tc = (1 << (pin_cs&31));
             }
-#else // !OPTIMIZE_ESP32
+#else // !OPTIMIZE_ESP32_P8
             digitalWrite(pin_cs,LOW);
-#endif // !OPTIMIZE_ESP32
+#endif // !OPTIMIZE_ESP32_P8
         }
         inline static void cs_high() FORCE_INLINE {
-#ifdef OPTIMIZE_ESP32
+#ifdef OPTIMIZE_ESP32_P8
             if(pin_cs>31) {
                 GPIO.out1_w1ts.val = (1 << ((pin_cs - 32)&31));
             } else if(pin_cs>-1) {
                 GPIO.out_w1ts = (1 << (pin_cs&31));
             }
-#else // !OPTIMIZE_ESP32
+#else // !OPTIMIZE_ESP32_P8
             digitalWrite(pin_cs,HIGH);
-#endif // !OPTIMIZE_ESP32
+#endif // !OPTIMIZE_ESP32_P8
         }
         
         inline static void wr_low() FORCE_INLINE {
-#ifdef OPTIMIZE_ESP32
+#ifdef OPTIMIZE_ESP32_P8
             if(pin_wr>31) {
                 GPIO.out1_w1tc.val = (1 << ((pin_wr - 32)&31));
             } else if(pin_wr>-1) {
                 GPIO.out_w1tc = (1 << (pin_wr&31));
             }
-#else // !OPTIMIZE_ESP32
+#else // !OPTIMIZE_ESP32_P8
             digitalWrite(pin_wr,LOW);
-#endif // !OPTIMIZE_ESP32
+#endif // !OPTIMIZE_ESP32_P8
         }
         inline static void wr_high() FORCE_INLINE {
-#ifdef OPTIMIZE_ESP32
+#ifdef OPTIMIZE_ESP32_P8
             if(pin_wr>31) {
                 GPIO.out1_w1ts.val = (1 << ((pin_wr - 32)&31));
             } else if(pin_wr>-1) {
                 GPIO.out_w1ts = (1 << (pin_wr&31));
             }
-#else // !OPTIMIZE_ESP32
+#else // !OPTIMIZE_ESP32_P8
             digitalWrite(pin_wr,HIGH);
-#endif // !OPTIMIZE_ESP32
+#endif // !OPTIMIZE_ESP32_P8
         }
 
         inline static void rd_low() FORCE_INLINE {
-#ifdef OPTIMIZE_ESP32
+#ifdef OPTIMIZE_ESP32_P8
             if(pin_rd>31) {
                 GPIO.out1_w1tc.val = (1 << ((pin_rd - 32)&31));
             } else if(pin_rd>-1) {
                 GPIO.out_w1tc = (1 << (pin_rd &31));
             }
-#else // !OPTIMIZE_ESP32
+#else // !OPTIMIZE_ESP32_P8
             digitalWrite(pin_rd,LOW);
-#endif // !OPTIMIZE_ESP32
+#endif // !OPTIMIZE_ESP32_P8
         }
         inline static void rd_high() FORCE_INLINE {
-#ifdef OPTIMIZE_ESP32
+#ifdef OPTIMIZE_ESP32_P8
             if(pin_rd>31) {
                 GPIO.out1_w1ts.val = (1 << ((pin_rd - 32)&31));
             } else if(pin_rd>-1) {
                 GPIO.out_w1ts = (1 << (pin_rd&31));
             }
-#else // !OPTIMIZE_ESP32
+#else // !OPTIMIZE_ESP32_P8
             digitalWrite(pin_rd,HIGH);
-#endif // !OPTIMIZE_ESP32
+#endif // !OPTIMIZE_ESP32_P8
         }
 
     };
-#ifdef OPTIMIZE_ESP32
+#ifdef OPTIMIZE_ESP32_P8
     template<int8_t PinCS, 
             int8_t PinWR, 
             int8_t PinRD,
@@ -731,5 +731,5 @@ namespace arduino {
                                 PinD5,
                                 PinD6,
                                 PinD7>::has_data_high_pins];
-#endif // OPTIMIZE_ESP32
+#endif // OPTIMIZE_ESP32_P8
 }

@@ -5,6 +5,7 @@
         #define OPTIMIZE_ESP32
         #define OPTIMIZE_DMA
     #endif
+    #define OPTIMIZE_ESP32_P8
     #define ASSIGNABLE_SPI_PINS
     #define ASSIGNABLE_I2C_PINS
 #endif
