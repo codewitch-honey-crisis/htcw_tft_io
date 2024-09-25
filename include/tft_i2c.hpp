@@ -83,7 +83,13 @@ namespace arduino {
             speed = base_speed;
             is_init =false;
 #ifdef ASSIGNABLE_I2C_PINS
-            i2c().begin(PinSda,PinScl);
+            #if defined(ARDUINO_ARCH_MBED_RP2040) || defined(ARDUINO_ARCH_RP2040)
+                i2c().setSDA(PinSda);
+                i2c().setSCL(PinScl);
+                i2c().begin();
+            #else
+                i2c().begin(PinSda,PinScl);
+            #endif
 #else // !ASSIGNABLE_I2C_PINS
             i2c().begin(i2c_host);
 #endif // !ASSIGNABLE_I2C_PINS
