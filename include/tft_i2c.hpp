@@ -84,8 +84,8 @@ namespace arduino {
             is_init =false;
 #ifdef ASSIGNABLE_I2C_PINS
             #if defined(ARDUINO_ARCH_MBED_RP2040) || defined(ARDUINO_ARCH_RP2040)
-                i2c().setSDA(PinSda);
-                i2c().setSCL(PinScl);
+                if(PinSda>-1) i2c().setSDA(PinSda);
+                if(PinScl>-1) i2c().setSCL(PinScl);
                 i2c().begin();
             #else
                 i2c().begin(PinSda,PinScl);
