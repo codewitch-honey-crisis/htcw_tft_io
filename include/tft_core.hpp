@@ -14,10 +14,15 @@
     #define ASSIGNABLE_I2C_PINS
 #endif
 #if defined(ARDUINO_ARCH_MBED_RP2040) || defined(ARDUINO_ARCH_RP2040)
+    #define SPI_TYPE SPIClassRP2040
     #define ASSIGNABLE_I2C_PINS
+    #define ASSIGNABLE_SPI_PINS
 #endif
 #if defined(__AVR__)
     #define OPTIMIZE_AVR
+#endif
+#ifndef SPI_TYPE
+#define SPI_TYPE SPIClass 
 #endif
 #define FORCE_INLINE __attribute((always_inline))
 namespace arduino {

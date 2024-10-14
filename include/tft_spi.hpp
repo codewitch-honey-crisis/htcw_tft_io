@@ -11,10 +11,10 @@ namespace arduino {
     template<uint8_t SpiHost=0>
     class spi_container final {
         #if defined(ESP32) || defined(ARDUINO_ARCH_STM32)
-                static SPIClass ispi;
+                static SPI_TYPE ispi;
         #endif
     public:
-        inline static SPIClass& instance() FORCE_INLINE {
+        inline static SPI_TYPE& instance() FORCE_INLINE {
             #if defined(ESP32) || defined(ARDUINO_ARCH_STM32)
                         return ispi;
             #else
@@ -51,7 +51,7 @@ namespace arduino {
     };
     #if defined(ESP32) || defined(ARDUINO_ARCH_STM32)
         template<uint8_t SpiHost> 
-        SPIClass spi_container<SpiHost>::ispi(SpiHost);
+        SPI_TYPE spi_container<SpiHost>::ispi(SpiHost);
 
     #endif
 
@@ -131,10 +131,10 @@ constexpr static const uint8_t dma_channel =
         #endif
 #endif // OPTIMIZE_ESP32
 #if defined(ESP32) || defined(ARDUINO_ARCH_STM32)
-        static SPIClass ispi;
+        static SPI_TYPE ispi;
 #endif
 public:
-        inline static SPIClass& spi() FORCE_INLINE {
+        inline static SPI_TYPE& spi() FORCE_INLINE {
             return spi_holder::instance();
         }
     
@@ -142,7 +142,26 @@ public:
             pinMode(pin_cs,OUTPUT);
             digitalWrite(pin_cs,HIGH);
 #ifdef ASSIGNABLE_SPI_PINS
-            spi().begin(pin_sclk,pin_miso,pin_mosi,-1);
+#if defined(ARDUINO_ARCH_MBED_RP2040) || defined(ARDUINO_ARCH_RP2040)
+    
+    if(PinCS>-1) {
+        spi().setCS((pin_size_t)PinCS);
+    }
+    if(PinMosi>-1) {
+        spi().setTX((pin_size_t)PinMosi);
+    }
+    if(PinMiso>-1) {
+        spi().setRX((pin_size_t)PinMiso);
+    }
+    if(PinSClk>-1) {
+        spi().setSCK((pin_size_t)PinSClk);
+    }
+    spi().begin();
+#else
+    spi().begin(pin_sclk,pin_miso,pin_mosi,-1);
+#endif
+
+
 #else // !ASSIGNABLE_SPI_PINS
             spi().begin();
 #endif // !ASSIGNABLE_SPI_PINS
